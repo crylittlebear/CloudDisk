@@ -36,6 +36,8 @@ private slots:
 
 	void sltBtnServerSetClicked();
 
+    void slgBtnRegFontClicked();
+
 private:
     void init();
 
