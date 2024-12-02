@@ -54,10 +54,10 @@ do \
 #define LOG_DEBUG(logmsgFormat, ...)
 #endif
 
-#define LOG_INFO(str) LOG_INFO_BASE(str.toUtf8().data(), __FILE__, __LINE__)
-#define LOG_ERROR(str) LOG_ERROR_BASE(str.toUtf8().data(), __FILE__, __LINE__)
-#define LOG_FATAL(str) LOG_FATAL_BASE(str.toUtf8().data(), __FILE__, __LINE__)
-#define LOG_DEBUG(str) LOG_DEBUG_BASE(str.toUtf8().data(), __FILE__, __LINE__)
+#define LOG_INFO(str) LOG_INFO_BASE(QString(str).toUtf8().data(), __FILE__, __LINE__)
+#define LOG_ERROR(str) LOG_ERROR_BASE(QString(str).toUtf8().data(), __FILE__, __LINE__)
+#define LOG_FATAL(str) LOG_FATAL_BASE(QString(str).toUtf8().data(), __FILE__, __LINE__)
+#define LOG_DEBUG(str) LOG_DEBUG_BASE(QString(str).toUtf8().data(), __FILE__, __LINE__)
 
 class Logger
 {

@@ -8,6 +8,8 @@
 #include "qjsondocument.h"
 #include "qjsonobject.h"
 #include "qjsonvalue.h"
+
+#include "logger.h"
 // #include "logininfoinstance.h"
 
 LoginDialog::LoginDialog(QWidget *parent)
@@ -16,42 +18,7 @@ LoginDialog::LoginDialog(QWidget *parent)
 {
 	ui->setupUi(this);
 
-	setWindowFlag(Qt::FramelessWindowHint);
-
-	isMoving_ = false;
-
-    common_ = Common::instance();
-    m_manager = Common::instance()->getNetworkAccessManager();
-
-	//mainWindow_ = new Mainwindow;
-
-	connect(ui->widgetTitle, &LoginTitle::sigBtnConfigClicked, [=](){
-		ui->stackedWidget->setCurrentWidget(ui->pageConfig);
-	});
-
-	connect(ui->widgetTitle, &LoginTitle::sigBtnMinClicked, [=](){
-		this->showMinimized();
-	});
-
-	connect(ui->widgetTitle, &LoginTitle::sigBtnCloseClicked, [=](){
-		if (ui->stackedWidget->currentWidget() == ui->pageConfig) {
-			ui->stackedWidget->setCurrentWidget(ui->pageLogin);
-		} else {
-			this->close();
-		}
-	});
-
-	connect(ui->tBtnRegFont, &QToolButton::clicked, this, &LoginDialog::sltBtnRegFontClicked);
-	connect(ui->toolButtonLogin, &QToolButton::clicked, this, &LoginDialog::sltBtnLoginClicked);
-	connect(ui->tBtnReg, &QToolButton::clicked, this, &LoginDialog::sltBtnRegClicked);
-	connect(ui->tBtnServerSet, &QToolButton::clicked, this, &LoginDialog::sltBtnServerSetClicked);
-
-	ui->stackedWidget->setCurrentWidget(ui->pageLogin);
-
-	ui->lineEditUser->setIconPath(":/img/user.png");
-	ui->lineEditPasswd->setIconPath(":/img/lock.png");
-
-	readConfigFile();
+    init();
 }
 
 LoginDialog::~LoginDialog()
@@ -70,7 +37,7 @@ void LoginDialog::mousePressEvent(QMouseEvent* event)
 void LoginDialog::mouseMoveEvent(QMouseEvent* event)
 {
 	if (isMoving_ && (event->buttons() & Qt::LeftButton)) {
-		this->move(event->globalPos() - position_);
+        this->move(event->globalPos() - position_);
 	}
 }
 
@@ -81,11 +48,16 @@ void LoginDialog::mouseReleaseEvent(QMouseEvent* event)
 	}
 }
 
+/**
+ * 登录按钮点击槽函数
+*/
 void LoginDialog::sltBtnLoginClicked()
 {
+    LOG_INFO("点击了登录按钮");
 	QString userName = ui->lineEditUser->text();
 	QString passwd = ui->lineEditPasswd->text();
 
+    // 验证用户名和密码的格式是否正确
 	QRegExp reg(USER_REG);
 	if (!reg.exactMatch(userName)) {
 		QMessageBox::warning(this, "警告", "用户名格式不正确");
@@ -103,10 +75,11 @@ void LoginDialog::sltBtnLoginClicked()
 
 	// 发送HTTP请求
 	QNetworkRequest request;
+    // 从配置文件中读取服务器IP和端口号信息
     QString ip = common_->getConfigValue("web_server", "ip");
     QString port = common_->getConfigValue("web_server", "port");
 	QString url(QString("http://%1:%2/login").arg(ip).arg(port));
-	qDebug() << "url = " << url;
+    LOG_DEBUG("登录URL为: " + url);
 	request.setUrl(url);
 	request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
 	// 将文本数据封装成json
@@ -118,15 +91,15 @@ void LoginDialog::sltBtnLoginClicked()
 	QJsonDocument document(paramObj);
 
 	QByteArray data = document.toJson();
-    qDebug() << "data = " << data;
-
-    QNetworkReply* reply = m_manager->post(request, data);
+    LOG_DEBUG("登录信息为：" + data);
+    // 发送HTTP请求并通过QNetworkReply接收
+    QNetworkReply* reply = networkManager_->post(request, data);
 
 	// 读取服务器返回的数据
 	connect(reply, &QNetworkReply::readyRead, this, [=](){
 		// 读数据
 		QByteArray data = reply->readAll();
-		qDebug() << data;
+        LOG_DEBUG("接收到来自服务器的登录响应为：" + data);
 
 		// 解析返回的数据
 		QJsonParseError err;
@@ -142,6 +115,7 @@ void LoginDialog::sltBtnLoginClicked()
 					QMessageBox::information(this, "消息", "登录成功");
 					// 将用户信息保存到cfg.json文件
 					bool isCheck = ui->checkBox->isChecked();
+                    // 如果没有设置保存登录信息，清除密码输入框内容
 					if (isCheck == false) {
 						ui->lineEditPasswd->setText("");
 					}
@@ -164,6 +138,9 @@ void LoginDialog::sltBtnLoginClicked()
 	});
 }
 
+/**
+ * 注册按钮点击槽函数
+*/
 void LoginDialog::sltBtnRegClicked()
 {
 	QString user = ui->lineEditRegUser->text();
@@ -237,12 +214,11 @@ void LoginDialog::sltBtnRegClicked()
 	}
 
 	// 发送HTTP请求
-	QNetworkAccessManager* manager = new QNetworkAccessManager(this);
 	QNetworkRequest request;
     QString ip = common_->getConfigValue("web_server", "ip");
     QString port = common_->getConfigValue("web_server", "port");
 	QString url(QString("http://%1:%2/reg").arg(ip).arg(port));
-	qDebug() << "URL：" << url;
+    LOG_DEBUG("注册URL为：" + url);
 	request.setUrl(url);
 	request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
 	// 将文本数据封装成json
@@ -258,13 +234,13 @@ void LoginDialog::sltBtnRegClicked()
 
 	QByteArray data = document.toJson();
 
-	QNetworkReply* reply = manager->post(request, data);
+    QNetworkReply* reply = networkManager_->post(request, data);
 
 	// 读取服务器返回的数据
 	connect(reply, &QNetworkReply::readyRead, this, [=](){
 		// 读数据
 		QByteArray data = reply->readAll();
-		qDebug() << data;
+        LOG_DEBUG("接收到来自服务器的注册响应为：" + data);
 
 		// 解析返回的数据
 		QJsonParseError err;
@@ -293,11 +269,11 @@ void LoginDialog::sltBtnServerSetClicked()
 {
 	QString ip = ui->lineEditIP->text();
 	QString port = ui->lineEditPort->text();
-	qDebug() << "port = " << port;
+    LOG_DEBUG("输入框内的IP为" + ip + "，端口号为：" + port);
 
 	// 验证IP和地址的格式
-
 	QRegExp ipExp(IP_REG);
+
 	if (!ipExp.exactMatch(ip)) {
 		QMessageBox::warning(this, "警告", "IP地址格式错误");
 		return;
@@ -314,6 +290,52 @@ void LoginDialog::sltBtnServerSetClicked()
 	common_->writeWebInfo(ip, port);
 }
 
+void LoginDialog::init()
+{
+    setWindowFlag(Qt::FramelessWindowHint);
+    setWindowIcon(QIcon(":/img/cloud.png"));
+
+    isMoving_ = false;
+
+    common_ = Common::instance();
+    networkManager_ = Common::instance()->getNetworkAccessManager();
+
+    ui->stackedWidget->setCurrentWidget(ui->pageLogin);
+
+    // 设置输入框内的ICON图标
+    ui->lineEditUser->setIconPath(":/img/user.png");
+    ui->lineEditPasswd->setIconPath(":/img/lock.png");
+    // 建立信号槽连接
+    buildConnections();
+    // 从cfg.json配置文件中读取信息到界面上
+    readConfigFile();
+}
+
+void LoginDialog::buildConnections()
+{
+    // 连接按钮与响应的StackedWidget对应的页面
+    connect(ui->widgetTitle, &LoginTitle::sigBtnConfigClicked, [=](){
+        ui->stackedWidget->setCurrentWidget(ui->pageConfig);
+    });
+
+    connect(ui->widgetTitle, &LoginTitle::sigBtnMinClicked, [=](){
+        this->showMinimized();
+    });
+
+    connect(ui->widgetTitle, &LoginTitle::sigBtnCloseClicked, [=](){
+        if (ui->stackedWidget->currentWidget() == ui->pageConfig) {
+            ui->stackedWidget->setCurrentWidget(ui->pageLogin);
+        } else {
+            this->close();
+        }
+    });
+    //
+    connect(ui->tBtnRegFont, &QToolButton::clicked, this, &LoginDialog::sltBtnRegFontClicked);
+    connect(ui->toolButtonLogin, &QToolButton::clicked, this, &LoginDialog::sltBtnLoginClicked);
+    connect(ui->tBtnReg, &QToolButton::clicked, this, &LoginDialog::sltBtnRegClicked);
+    connect(ui->tBtnServerSet, &QToolButton::clicked, this, &LoginDialog::sltBtnServerSetClicked);
+}
+
 void LoginDialog::readConfigFile()
 {
     QString user = common_->getConfigValue("login", "user");
@@ -327,12 +349,13 @@ void LoginDialog::readConfigFile()
 		unsigned char pwdDec[1024];
 		int pwdDecLen = 0;
 		int ret = DesDec((unsigned char*)pwdTemp.data(), pwdTemp.size(), pwdDec, &pwdDecLen);
-		if (ret != 0) {
-			qDebug() << "解密失败";
-		}
-		QString pwd = QString::fromLocal8Bit((const char*)(pwdDec), pwdDecLen);
-        // qDebug() << "密码：" << pwd;
-
+        QString pwd;
+        if (ret == 0) {
+            pwd = QString::fromLocal8Bit((const char*)(pwdDec), pwdDecLen);
+            LOG_INFO("密码解密成功");
+        } else {
+            LOG_ERROR("密码解密失败");
+        }
 		ui->checkBox->setChecked(true);
 		ui->lineEditPasswd->setText(pwd);
 	} else {
@@ -345,10 +368,13 @@ void LoginDialog::readConfigFile()
 	unsigned char userDec[1024];
 	int userDecLen = 0;
 	int ret = DesDec((unsigned char*)userTemp.data(), userTemp.size(), userDec, &userDecLen);
-	if (ret != 0) {
-		qDebug() << "解密失败";
-	}
-	QString userName = QString::fromLocal8Bit((const char*)(userDec), userDecLen);
+    QString userName;
+    if (ret == 0) {
+        userName = QString::fromLocal8Bit((const char*)(userDec), userDecLen);
+        LOG_INFO("用户名解密成功");
+    } else {
+        LOG_ERROR("用户名解密失败");
+    }
     // qDebug() << "用户名：" << userName;
 	ui->lineEditUser->setText(userName);
 
@@ -362,15 +388,6 @@ void LoginDialog::readConfigFile()
 		ui->lineEditPort->setText(port);
 	}
 }
-
-// void LoginDialog::serverSet()
-// {
-//     QString ip = m_common->getConfValue("web_server", "ip");
-//     QString port = m_common->getConfValue("web_server", "port");
-//     qDebug() << "ip:" << ip << ",port" << port;
-//     ui->server_ip->setText(ip);
-//     ui->server_port->setText(port);
-// }
 
 void LoginDialog::saveLoginInfoData(QString userName, QString token, QString ip, QString port)
 {

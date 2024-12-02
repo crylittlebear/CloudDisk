@@ -18,7 +18,7 @@ void Logger::log(QString str, const char* file, int line)
     QString logMsg;
     switch (logLevel_) {
     case LEVEL_INFO:
-        logMsg += "[INFO ]";
+        logMsg += "[INFO]";
         break;
     case LEVEL_ERROR:
         logMsg += "[ERROR]";
@@ -34,7 +34,7 @@ void Logger::log(QString str, const char* file, int line)
     }
     QString filePath(file);
     QString fileName = filePath.right(filePath.size() - filePath.lastIndexOf('/') - 1);
-    QString msg = QString("  [file: %1, line: %2] --%3").arg(fileName).arg(line).arg(str);
+    QString msg = QString("  [%1, line: %2] --%3").arg(fileName).arg(line).arg(str);
     logMsg += msg;
     qDebug() << logMsg.toUtf8().data();
 }

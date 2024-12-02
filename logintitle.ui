@@ -103,6 +103,12 @@
          <height>30</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>服务器设置</string>
+       </property>
+       <property name="toolTipDuration">
+        <number>-2</number>
+       </property>
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -115,8 +121,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="autoRaise">
@@ -147,6 +153,12 @@
        <property name="icon">
         <iconset resource="res.qrc">
          <normaloff>:/img/minus (2).png</normaloff>:/img/minus (2).png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
        <property name="autoRaise">
         <bool>true</bool>
@@ -180,6 +192,12 @@
        <property name="icon">
         <iconset resource="res.qrc">
          <normaloff>:/img/close.png</normaloff>:/img/close.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
        <property name="autoRaise">
         <bool>true</bool>

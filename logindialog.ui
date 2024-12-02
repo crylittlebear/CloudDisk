@@ -54,7 +54,7 @@
       <string notr="true"/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="pageLogin">
       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,8,1">
@@ -1069,7 +1069,7 @@ border-radius: 25px;</string>
                        <font>
                         <family>微软雅黑</family>
                         <pointsize>12</pointsize>
-                        <bold>false</bold>
+                        <bold>true</bold>
                        </font>
                       </property>
                       <property name="text">
@@ -1100,7 +1100,7 @@ border-radius: 25px;</string>
                        <font>
                         <family>微软雅黑</family>
                         <pointsize>12</pointsize>
-                        <bold>false</bold>
+                        <bold>true</bold>
                        </font>
                       </property>
                       <property name="text">

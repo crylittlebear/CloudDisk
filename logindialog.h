@@ -39,18 +39,20 @@ private slots:
 	void sltBtnServerSetClicked();
 
 private:
-	void readConfigFile();
+    void init();
 
-    // void serverSet();
+    void buildConnections();
+
+	void readConfigFile();
 
     void saveLoginInfoData(QString userName, QString token, QString ip, QString port);
 
 private:
 	Ui::LoginDialogClass *ui;
 
-	QPoint position_;
+    QPoint position_;   // 记录鼠标当前位置，用于实现屏幕拖动
 	bool isMoving_;
-	Common* common_;
 
-    QNetworkAccessManager *m_manager;
+    Common* common_;    // common类，提供写入和读取配置Json文档函数
+    QNetworkAccessManager* networkManager_;   // 网络接口类，用于实现Http请求与接收操作
 };
