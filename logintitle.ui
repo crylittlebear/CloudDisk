@@ -110,7 +110,10 @@
         <number>-2</number>
        </property>
        <property name="styleSheet">
-        <string notr="true"/>
+        <string notr="true">QToolButton:hover
+{
+	background-color: gray;
+}</string>
        </property>
        <property name="text">
         <string/>
@@ -145,7 +148,10 @@
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true"/>
+        <string notr="true">QToolButton:hover
+{
+	background-color: gray;
+}</string>
        </property>
        <property name="text">
         <string/>

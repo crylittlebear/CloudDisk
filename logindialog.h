@@ -30,8 +30,6 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* event) override;
 
 private slots:
-	void sltBtnRegFontClicked();
-
 	void sltBtnLoginClicked();
 
 	void sltBtnRegClicked();

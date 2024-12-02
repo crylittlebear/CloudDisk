@@ -10,7 +10,7 @@
 #include "qjsonvalue.h"
 
 #include "logger.h"
-// #include "logininfoinstance.h"
+#include "logininfoinstance.h"
 
 LoginDialog::LoginDialog(QWidget *parent)
     : QDialog(parent)
@@ -329,8 +329,7 @@ void LoginDialog::buildConnections()
             this->close();
         }
     });
-    //
-    connect(ui->tBtnRegFont, &QToolButton::clicked, this, &LoginDialog::sltBtnRegFontClicked);
+    // 连接登录、注册、设置IP端口按钮的信号和槽函数
     connect(ui->toolButtonLogin, &QToolButton::clicked, this, &LoginDialog::sltBtnLoginClicked);
     connect(ui->tBtnReg, &QToolButton::clicked, this, &LoginDialog::sltBtnRegClicked);
     connect(ui->tBtnServerSet, &QToolButton::clicked, this, &LoginDialog::sltBtnServerSetClicked);
@@ -375,7 +374,6 @@ void LoginDialog::readConfigFile()
     } else {
         LOG_ERROR("用户名解密失败");
     }
-    // qDebug() << "用户名：" << userName;
 	ui->lineEditUser->setText(userName);
 
 
@@ -394,16 +392,11 @@ void LoginDialog::saveLoginInfoData(QString userName, QString token, QString ip,
     //跳转到其他页面
     //保存数据, token, user, ip, 端口
     //除了登录外：每一个请求都需要校验token,每一个请求都需要带token
-    // LoginInfoInstance *loginInfo = LoginInfoInstance::getInstance();
-    // qDebug() << "token:" << token;
+    LoginInfoInstance *loginInfo = LoginInfoInstance::instance();
 
-    // loginInfo->setUser(userName);
-    // loginInfo->setToken(token);
-    // loginInfo->setIp(ip);
-    // loginInfo->setPort(port);
-}
-
-void LoginDialog::sltBtnRegFontClicked() 
-{
-	ui->stackedWidget->setCurrentWidget(ui->pageRegister);
+    loginInfo->setUser(userName);
+    loginInfo->setToken(token);
+    loginInfo->setIp(ip);
+    loginInfo->setPort(port);
+    LOG_INFO(QString("成功保存信息到LoginInfoInstance类中，userName:%1，token:%2，ip:%3，port:%4").arg(userName).arg(token).arg(ip).arg(port));
 }
