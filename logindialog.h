@@ -34,6 +34,8 @@ private slots:
 
 	void sltBtnRegClicked();
 
+    void slgBtnRegBacktoLoginClicked();
+
 	void sltBtnServerSetClicked();
 
     void slgBtnRegFontClicked();

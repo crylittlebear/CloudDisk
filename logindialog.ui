@@ -54,7 +54,7 @@
       <string notr="true"/>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="pageLogin">
       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,8,1">
@@ -845,7 +845,7 @@ QLineEdit
                    <widget class="QToolButton" name="tBtnReg">
                     <property name="minimumSize">
                      <size>
-                      <width>250</width>
+                      <width>120</width>
                       <height>30</height>
                      </size>
                     </property>
@@ -870,6 +870,51 @@ QToolButton:hover
                     </property>
                     <property name="text">
                      <string>注册</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_15">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QToolButton" name="tBtnBacktoLogin">
+                    <property name="minimumSize">
+                     <size>
+                      <width>120</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <family>黑体</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">QToolButton
+{
+	border-radius: 5px;
+	background-color: rgb(85, 170, 255);
+	color: white;
+}
+
+QToolButton:hover
+{
+	background-color: rgb(200, 0, 0);
+}</string>
+                    </property>
+                    <property name="text">
+                     <string>返回</string>
                     </property>
                    </widget>
                   </item>

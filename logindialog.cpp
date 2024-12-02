@@ -265,6 +265,11 @@ void LoginDialog::sltBtnRegClicked()
 	});
 }
 
+void LoginDialog::slgBtnRegBacktoLoginClicked()
+{
+    ui->stackedWidget->setCurrentWidget(ui->pageLogin);
+}
+
 void LoginDialog::sltBtnServerSetClicked()
 {
 	QString ip = ui->lineEditIP->text();
@@ -336,6 +341,7 @@ void LoginDialog::buildConnections()
     });
     // 连接登录、注册、设置IP端口按钮的信号和槽函数
     connect(ui->tBtnRegFont, &QToolButton::clicked, this, &LoginDialog::slgBtnRegFontClicked);
+    connect(ui->tBtnBacktoLogin, &QToolButton::clicked, this, &LoginDialog::slgBtnRegBacktoLoginClicked);
     connect(ui->toolButtonLogin, &QToolButton::clicked, this, &LoginDialog::sltBtnLoginClicked);
     connect(ui->tBtnReg, &QToolButton::clicked, this, &LoginDialog::sltBtnRegClicked);
     connect(ui->tBtnServerSet, &QToolButton::clicked, this, &LoginDialog::sltBtnServerSetClicked);
