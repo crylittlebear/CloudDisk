@@ -4,5 +4,5 @@
 
 `网盘的用户登录界面如下：`
 
-<img src="./ScreenShots/login.png" alt="描述" style="width:50%;">
+<img src="./ScreenShots/login.png" alt="描述" style="width:35%;">
 
