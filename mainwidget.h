@@ -17,6 +17,12 @@ public:
     MainWidget(QWidget *parent = nullptr);
     ~MainWidget();
 
+private slots:
+    void on_tBtnClose_clicked();
+
+private:
+    void init();
+
 private:
     Ui::MainWidget *ui;
 };

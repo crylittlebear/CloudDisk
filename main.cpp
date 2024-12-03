@@ -1,7 +1,6 @@
 #include "mainwidget.h"
 
 #include <QApplication>
-
 #include "logindialog.h"
 
 int main(int argc, char *argv[])
@@ -16,6 +15,7 @@ int main(int argc, char *argv[])
     // QApplication::setFont(font);
 
     QApplication a(argc, argv);
+    // MainWidget w;
     LoginDialog w;
     w.show();
     return a.exec();
